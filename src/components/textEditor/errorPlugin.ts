@@ -5,7 +5,7 @@
 
 import { debounce } from 'lodash';
 import { Plugin } from 'prosemirror-state';
-import spellCheck from 'components/textEditor/spellCheckerService';
+import spellCheck from 'services/spellCheckerService';
 import { Decoration, DecorationSet, EditorView } from 'prosemirror-view';
 
 // Ссылка для проброса данных между асинхронным функционалом и плагином

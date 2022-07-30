@@ -13,17 +13,9 @@ export const TextEditorWrapper = styled('div')(
         }
         .error {
             border-bottom: 2px solid red;
-        }
-        .tooltip {
-            position: absolute;
-            pointer-events: none;
-            z-index: 2000;
-            background: white;
-            border: 1px solid silver;
-            border-radius: 2px;
-            padding: 2px 10px;
-            margin-bottom: 7px;
-            transform: translateX(-50%);
+            &:hover {
+                cursor: pointer;
+            }
         }
     `
 );

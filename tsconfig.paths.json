@@ -5,8 +5,8 @@
       "components/*": ["src/components/*"],
       "utils/*": ["src/utils/*"],
       "hooks/*": ["src/hooks/*"],
-      "layout/*": ["src/layout/*"]
-
+      "layout/*": ["src/layout/*"],
+      "services/*": ["src/services/*"]
     }
   }
 }

@@ -7,6 +7,9 @@ import { useState, SetStateAction, Dispatch } from 'react';
 import { EditorState } from 'prosemirror-state';
 
 type ConfigProps = Parameters<typeof EditorState.create>[0];
+type AddProps = {
+    scrollToSelection: number;
+}
 
 export const useProseMirror = (
     config: ConfigProps

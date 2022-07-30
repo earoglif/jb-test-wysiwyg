@@ -13,7 +13,6 @@ const spellCheckerService = (str: string) => {
         data: `{"language":"enUS","fieldvalues":"${str}","config":{"forceUpperCase":false,"ignoreIrregularCaps":false,"ignoreFirstCaps":true,"ignoreNumbers":true,"ignoreUpper":false,"ignoreDouble":false,"ignoreWordsWithNumbers":true}}`
     };
 
-    // thiss is intresting
     return axios.request(options);
 };
 
