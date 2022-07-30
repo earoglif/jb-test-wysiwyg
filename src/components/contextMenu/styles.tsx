@@ -7,5 +7,6 @@ export const ContextMenuWrapper = styled(Box)(
         z-index: 10;
         border: 1px solid;
         background-color: ${theme.palette.background.paper};
+        transform: translateY(1em);
     `
 );

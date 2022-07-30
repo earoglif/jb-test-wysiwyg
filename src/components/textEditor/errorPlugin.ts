@@ -17,13 +17,22 @@ const lintDeco = (doc: any, asyncDecs: any[]) => {
     asyncDecs.forEach((prob: any) => {
         const from = prob.position + 1;
         const to = from + prob.word.length;
-        decors.push(Decoration.inline(from, to, { class: 'error' }));
+        decors.push(
+            Decoration.inline(from, to, {
+                class: 'error',
+                'data-suggestions': prob.suggestions.join(),
+                'data-from': from,
+                'data-to': to
+            })
+        );
     });
 
     return DecorationSet.create(doc, decors);
 };
 
-// Проверка ошибок с задержкой в 500мс после завершения ввода текста
+/**
+ * Проверка ошибок с задержкой в 500мс после завершения ввода текста
+ */
 const debouncedApiRequest = debounce(async (nodes, content) => {
     // Ограничил проверку только для первой новы в документе, чтоб не перебарщивать с запросами.
     const spellCheckData = await spellCheck(content[0]);
@@ -62,6 +71,7 @@ export default new Plugin({
                     }
                 }
                 debouncedApiRequest(nodes, content);
+                return DecorationSet.create(doc, []);
             }
 
             const asyncDecs = tr.getMeta('asyncDecorations');

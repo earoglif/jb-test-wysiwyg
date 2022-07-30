@@ -7,9 +7,11 @@ import React, { FC, useEffect } from 'react';
 import { ClickAwayListener, BoxProps, Menu, MenuItem } from '@mui/material';
 import { ContextMenuWrapper } from './styles';
 
+type autocompleteHandler = (index: number) => void;
+type fixErrorHandler = (index: number, from: number, to: number) => void;
 type ContextMenuProps = {
     menuItems: string[];
-    callback: (index: number) => void;
+    callback: autocompleteHandler;
     onClickAway: () => void;
 };
 export const ContextMenu: FC<ContextMenuProps & BoxProps> = ({
@@ -30,7 +32,7 @@ export const ContextMenu: FC<ContextMenuProps & BoxProps> = ({
                         <MenuItem
                             key={index}
                             onClick={() => {
-                                callback(index);
+                                callback && callback(index);
                             }}
                         >
                             {item}

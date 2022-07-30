@@ -1,9 +1,9 @@
 import React, { ChangeEvent, useEffect, useRef, useState } from 'react';
-import { ClickAwayListener, Portal } from '@mui/material';
+import { Portal } from '@mui/material';
 import { isEqual } from 'lodash';
 
 import { keymap } from 'prosemirror-keymap';
-import { MarkType } from 'prosemirror-model';
+import { MarkType, Node } from 'prosemirror-model';
 import { baseKeymap, toggleMark, setBlockType } from 'prosemirror-commands';
 import { EditorState, Transaction, Command } from 'prosemirror-state';
 
@@ -15,6 +15,7 @@ import { MainContainer } from 'layout/mainContainer';
 import { Toolbar } from 'components/toolbar';
 import TextEditor from 'components/textEditor';
 import { getStrByPrefix } from 'utils/getStrByPrefix';
+import { EditorView } from 'prosemirror-view';
 
 function toggleMarkCommand(mark: MarkType): any {
     return (
@@ -31,13 +32,19 @@ export const App = () => {
     const [contextMenuPos, setContextMenuPos] = useState({ top: 0, left: 0 });
     const [contextMenuItems, setContextMenuItems] = useState<string[]>([]);
     const scrollToSelectionRef = useRef({ from: 0, to: 0 });
+    const selectErrorRef = useRef({ from: 0, to: 0 });
+    const isAutocomplete = useRef<boolean>(true);
 
+    /**
+     *  Метод обработки нажария на Tab в редакторе
+     * */
     const tabClickHandler: Command = (state, dispatch, view) => {
         const { from, to } = state.selection;
         const start = view?.coordsAtPos(from);
         const head = state.selection.$head;
 
         if (from === to && head.parentOffset === head.parent.content.size) {
+            isAutocomplete.current = true;
             setContextMenuVisible(prev => !prev);
             setContextMenuPos({
                 top: start?.top ?? 0,
@@ -60,17 +67,6 @@ export const App = () => {
         ]
     });
 
-    /**
-     * Метод скрывает контекстное меню
-     * */
-    const clickAwayHandler = () => {
-        setContextMenuVisible(false);
-    };
-
-    useEffect(() => {
-        // console.log('RENDER:', getStrByPrefix('No matter'));
-    }, []);
-
     useEffect(() => {
         // Проверяем наличие перемещения курсора. Если есть, то скрывает контекстное меню.
         const { from, to } = state.selection;
@@ -79,8 +75,15 @@ export const App = () => {
             scrollToSelectionRef.current = { from, to };
         }
 
-        console.log('State update:', state);
+        // console.log('State update:', state);
     }, [state]);
+
+    /**
+     * Метод скрывает контекстное меню
+     * */
+    const clickAwayHandler = () => {
+        setContextMenuVisible(false);
+    };
 
     /**
      * Метод добавляет текст выбранной строки на место курсора
@@ -90,6 +93,47 @@ export const App = () => {
         const tr = state.tr;
         tr.insertText(contextMenuItems[index]);
         setState(state.apply(tr));
+    };
+
+    /**
+     * Метод заменяет ошибочное слово правильным, выбранным из списка
+     * @param index – индекс выбранного правильного слова
+     * */
+    const fixErrorHandler = (index: number) => {
+        const { from, to } = selectErrorRef.current;
+        const tr = state.tr;
+        tr.insertText(contextMenuItems[index], from, to);
+        setState(state.apply(tr));
+        setContextMenuVisible(false);
+    };
+
+    /**
+     * Метод обработки клика по слову, подсвеченному, как ошибка
+     * */
+    const handleClickOnError = (
+        view: EditorView,
+        pos: number,
+        node: Node,
+        nodePos: number,
+        event: MouseEvent
+    ) => {
+        if (!(event.target instanceof HTMLSpanElement)) {
+            return;
+        }
+        const { from } = state.selection;
+        const start = view?.coordsAtPos(from);
+        const suggestions = event.target.dataset.suggestions?.split(',') || [];
+        const errorFrom = Number(event.target.dataset.from);
+        const errorTo = Number(event.target.dataset.to);
+
+        isAutocomplete.current = false;
+        selectErrorRef.current = { from: errorFrom, to: errorTo };
+        setContextMenuPos({
+            top: start?.top ?? 0,
+            left: start?.left ?? 0
+        });
+        setContextMenuItems(suggestions);
+        setContextMenuVisible(true);
     };
 
     return (
@@ -119,12 +163,21 @@ export const App = () => {
                     })(state, (tr: Transaction) => setState(state.apply(tr)));
                 }}
             />
-            <TextEditor state={state} onChange={setState} />
+            Text wth few erors within
+            <TextEditor
+                state={state}
+                onChange={setState}
+                handleClickOn={handleClickOnError}
+            />
             {contextMenuVisible && (
                 <Portal>
                     <ContextMenu
                         menuItems={contextMenuItems}
-                        callback={autocompleteClickHandler}
+                        callback={
+                            isAutocomplete.current
+                                ? autocompleteClickHandler
+                                : fixErrorHandler
+                        }
                         onClickAway={clickAwayHandler}
                         top={contextMenuPos.top}
                         left={contextMenuPos.left}
