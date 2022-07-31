@@ -3,17 +3,26 @@
  * */
 
 import React, { FC } from 'react';
-import { Box, BoxProps, Stack, IconButton, Select, MenuItem } from '@mui/material';
+import {
+    Box,
+    BoxProps,
+    Stack,
+    IconButton,
+    Select,
+    MenuItem
+} from '@mui/material';
 import { FormatBold, FormatItalic } from '@mui/icons-material';
 
 type ToolbarProps = {
     toggleBold: () => any;
     toggleItalic: any;
+    blockTypeValue: string;
     setBlockType: any;
 };
 export const Toolbar: FC<ToolbarProps & BoxProps> = ({
     toggleBold,
     toggleItalic,
+    blockTypeValue,
     setBlockType,
     ...props
 }) => {
@@ -22,7 +31,7 @@ export const Toolbar: FC<ToolbarProps & BoxProps> = ({
             <Stack direction="row" spacing={1} alignItems="center">
                 <Box flexGrow={1}>
                     <Select
-                        defaultValue="p"
+                        value={blockTypeValue}
                         size="small"
                         onChange={setBlockType}
                     >

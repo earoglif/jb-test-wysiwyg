@@ -1,8 +1,3 @@
-/**
- * Обертка для редактора. Взято и немного доработано отсюда:
- * https://github.com/abingham/use-prosemirror/blob/main/src/ProseMirror.tsx
- * */
-
 import React, {
     useRef,
     useImperativeHandle,
@@ -35,6 +30,9 @@ interface PropsWithDispatchTransaction {
 
 type Props = PropsBase & (PropsWithOnChange | PropsWithDispatchTransaction);
 
+/**
+ * Обертка для редактора. Взято и немного доработано отсюда: https://github.com/abingham/use-prosemirror/blob/main/src/ProseMirror.tsx
+ * */
 export default forwardRef<Handle, Props>(function ProseMirror(
     props,
     ref

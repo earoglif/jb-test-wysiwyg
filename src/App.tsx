@@ -31,12 +31,13 @@ export const App = () => {
         useState<boolean>(false);
     const [contextMenuPos, setContextMenuPos] = useState({ top: 0, left: 0 });
     const [contextMenuItems, setContextMenuItems] = useState<string[]>([]);
+    const [blockTypeValue, setBlockTypeValue] = useState<string>('p');
     const scrollToSelectionRef = useRef({ from: 0, to: 0 });
     const selectErrorRef = useRef({ from: 0, to: 0 });
     const isAutocomplete = useRef<boolean>(true);
 
     /**
-     *  Метод обработки нажария на Tab в редакторе
+     *  Метод обработки нажатия на Tab в редакторе
      * */
     const tabClickHandler: Command = (state, dispatch, view) => {
         const { from, to } = state.selection;
@@ -52,8 +53,6 @@ export const App = () => {
             });
             setContextMenuItems(getStrByPrefix(head.parent.textContent));
         }
-
-        console.log('TAB:', state.selection, head.parent);
         return true;
     };
     const [state, setState] = useProseMirror({
@@ -68,14 +67,17 @@ export const App = () => {
     });
 
     useEffect(() => {
-        // Проверяем наличие перемещения курсора. Если есть, то скрывает контекстное меню.
-        const { from, to } = state.selection;
+        // Проверяем наличие перемещения каретки. Если есть, то скрывает контекстное меню.
+        const { $from, from, to } = state.selection;
+        const { level } = $from.parent.attrs;
+
         if (!isEqual(scrollToSelectionRef.current, { from, to })) {
             setContextMenuVisible(false);
             scrollToSelectionRef.current = { from, to };
         }
 
-        // console.log('State update:', state);
+        // Устанавливаем тип редактируеемого блока
+        setBlockTypeValue(level ? level : 'p');
     }, [state]);
 
     /**
@@ -87,7 +89,7 @@ export const App = () => {
 
     /**
      * Метод добавляет текст выбранной строки на место курсора
-     * @param index - индекс выбранной строки
+     * @param index - Индекс выбранной строки
      * */
     const autocompleteClickHandler = (index: number) => {
         const tr = state.tr;
@@ -97,7 +99,7 @@ export const App = () => {
 
     /**
      * Метод заменяет ошибочное слово правильным, выбранным из списка
-     * @param index – индекс выбранного правильного слова
+     * @param index - Индекс выбранного правильного слова
      * */
     const fixErrorHandler = (index: number) => {
         const { from, to } = selectErrorRef.current;
@@ -149,8 +151,11 @@ export const App = () => {
                         setState(state.apply(tr))
                     )
                 }
+                blockTypeValue={blockTypeValue}
                 setBlockType={(event: ChangeEvent<HTMLInputElement>) => {
                     const value = event.target.value;
+                    setBlockTypeValue(value);
+
                     if (value === 'p') {
                         setBlockType(schema.nodes.paragraph)(
                             state,
