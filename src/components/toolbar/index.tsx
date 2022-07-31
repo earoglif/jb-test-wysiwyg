@@ -1,7 +1,3 @@
-/**
- * Тултип
- * */
-
 import React, { FC } from 'react';
 import {
     Box,
@@ -9,16 +5,26 @@ import {
     Stack,
     IconButton,
     Select,
-    MenuItem
+    MenuItem,
+    SelectChangeEvent
 } from '@mui/material';
 import { FormatBold, FormatItalic } from '@mui/icons-material';
+import {blockTypeValueProps} from 'data/types';
 
 type ToolbarProps = {
-    toggleBold: () => any;
-    toggleItalic: any;
-    blockTypeValue: string;
-    setBlockType: any;
+    /** Переключение режима "Жирный" */
+    toggleBold: () => void;
+    /** Переключение режима "Курсив" */
+    toggleItalic: () => void;
+    /** Значение типа абзаца/заголовка */
+    blockTypeValue: blockTypeValueProps;
+    /** Переключение типа абзаца/заголовка */
+    setBlockType: (event: SelectChangeEvent<blockTypeValueProps>) => void;
 };
+
+/**
+ * Верхнее меню редактора
+ * */
 export const Toolbar: FC<ToolbarProps & BoxProps> = ({
     toggleBold,
     toggleItalic,

@@ -1,0 +1,1 @@
+export type blockTypeValueProps = 'p'|'1'|'2'|'3'|'4'

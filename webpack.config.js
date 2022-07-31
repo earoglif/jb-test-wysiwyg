@@ -11,6 +11,7 @@ module.exports = {
     resolve: {
         alias: {
             components: path.resolve(__dirname, 'src/components/'),
+            data: path.resolve(__dirname, 'src/data/'),
             utils: path.resolve(__dirname, 'src/utils/'),
             hooks: path.resolve(__dirname, 'src/hooks/'),
             layout: path.resolve(__dirname, 'src/layout/'),

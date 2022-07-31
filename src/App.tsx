@@ -1,4 +1,4 @@
-import React, { ChangeEvent, useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Portal } from '@mui/material';
 import { isEqual } from 'lodash';
 
@@ -6,6 +6,7 @@ import { keymap } from 'prosemirror-keymap';
 import { MarkType, Node } from 'prosemirror-model';
 import { baseKeymap, toggleMark, setBlockType } from 'prosemirror-commands';
 import { EditorState, Transaction, Command } from 'prosemirror-state';
+import { EditorView } from 'prosemirror-view';
 
 import { useProseMirror } from 'hooks/useProseMirror';
 import schema from 'components/textEditor/schema';
@@ -15,26 +16,31 @@ import { MainContainer } from 'layout/mainContainer';
 import { Toolbar } from 'components/toolbar';
 import TextEditor from 'components/textEditor';
 import { getStrByPrefix } from 'utils/getStrByPrefix';
-import { EditorView } from 'prosemirror-view';
-
-function toggleMarkCommand(mark: MarkType): any {
-    return (
-        state: EditorState,
-        dispatch: ((tr: Transaction) => void) | undefined
-    ) => toggleMark(mark)(state, dispatch);
-}
-const toggleBold = toggleMarkCommand(schema.marks.strong);
-const toggleItalic = toggleMarkCommand(schema.marks.em);
+import { blockTypeValueProps } from 'data/types';
 
 export const App = () => {
     const [contextMenuVisible, setContextMenuVisible] =
         useState<boolean>(false);
     const [contextMenuPos, setContextMenuPos] = useState({ top: 0, left: 0 });
     const [contextMenuItems, setContextMenuItems] = useState<string[]>([]);
-    const [blockTypeValue, setBlockTypeValue] = useState<string>('p');
+    const [blockTypeValue, setBlockTypeValue] =
+        useState<blockTypeValueProps>('p');
     const scrollToSelectionRef = useRef({ from: 0, to: 0 });
     const selectErrorRef = useRef({ from: 0, to: 0 });
     const isAutocomplete = useRef<boolean>(true);
+
+    /**
+     * Метод переключения тэгов
+     * @property mark - Тип тэга
+     * */
+    function toggleMarkCommand(mark: MarkType): Command {
+        return (
+            state: EditorState,
+            dispatch: ((tr: Transaction) => void) | undefined
+        ) => toggleMark(mark)(state, dispatch);
+    }
+    const toggleBold = toggleMarkCommand(schema.marks.strong);
+    const toggleItalic = toggleMarkCommand(schema.marks.em);
 
     /**
      *  Метод обработки нажатия на Tab в редакторе
@@ -152,8 +158,8 @@ export const App = () => {
                     )
                 }
                 blockTypeValue={blockTypeValue}
-                setBlockType={(event: ChangeEvent<HTMLInputElement>) => {
-                    const value = event.target.value;
+                setBlockType={event => {
+                    const value = event.target.value as blockTypeValueProps;
                     setBlockTypeValue(value);
 
                     if (value === 'p') {

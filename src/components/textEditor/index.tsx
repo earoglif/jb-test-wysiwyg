@@ -7,7 +7,7 @@ import React, {
 } from 'react';
 import { EditorView, EditorProps, DirectEditorProps } from 'prosemirror-view';
 import { EditorState, Transaction } from 'prosemirror-state';
-import { TextEditorWrapper } from 'components/textEditor/styles';
+import { TextEditorWrapper } from './styles';
 
 export interface Handle {
     view: EditorView | null;
