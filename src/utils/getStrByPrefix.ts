@@ -1,4 +1,4 @@
-import { autocomplete } from '../data/autocomplete';
+import { autocomplete } from 'data/autocomplete';
 import { replaceNbsps } from './replaceNbsps';
 
 type getStrByPrefixProps = (prefix: string) => string[];

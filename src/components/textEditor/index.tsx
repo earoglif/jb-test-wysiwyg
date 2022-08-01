@@ -62,6 +62,7 @@ export default forwardRef<Handle, Props>(function ProseMirror(
     }));
     return (
         <TextEditorWrapper
+            data-testid='textEditor'
             ref={root}
             style={props.style}
             className={props.className}

@@ -174,7 +174,6 @@ export const App = () => {
                     })(state, (tr: Transaction) => setState(state.apply(tr)));
                 }}
             />
-            Text wth few erors within
             <TextEditor
                 state={state}
                 onChange={setState}

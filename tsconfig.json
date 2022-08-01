@@ -4,10 +4,12 @@
         "outDir": "./dist",
         "strict": true,
         "target": "es5",
-        "module": "es6",
         "jsx": "react",
-        "noImplicitAny": true,
-        "allowSyntheticDefaultImports": true,
+        "lib": ["dom", "esnext"],
+        "types": ["jest-prosemirror"],
+        "module": "esnext",
+        "esModuleInterop": true,
         "moduleResolution": "node"
-    }
+    },
+    "exclude": ["node_modules"]
 }
